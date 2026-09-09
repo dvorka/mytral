@@ -18,6 +18,10 @@ This MyTraL **minor** release brings:
 ### Fixed
 - Fixed the gear chart view (`Settings > Gear > Chart`) showing the gear table
   underneath the chart instead of the chart alone.
+- Fixed the gear component sidebar (`Settings > Gear > Edit`/`Detail`) always
+  jumping back to the first component after adding, editing, servicing,
+  retiring or un-retiring a component - it now stays on the component just
+  changed.
 
 ### Documentation
 - .
