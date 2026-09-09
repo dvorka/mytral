@@ -22,6 +22,12 @@ This MyTraL **minor** release brings:
   jumping back to the first component after adding, editing, servicing,
   retiring or un-retiring a component - it now stays on the component just
   changed.
+- Fixed the activity type emoji avatar in the year feed sometimes rendering
+  narrower than others - the avatar is now a fixed-width flex item regardless
+  of the emoji glyph.
+- Fixed the activity type emoji avatar on the activity detail, activity
+  analysis and gear detail pages using the activity type color as a solid
+  background instead of a left border, unlike the year feed.
 
 ### Documentation
 - .

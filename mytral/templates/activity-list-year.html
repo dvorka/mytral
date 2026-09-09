@@ -400,7 +400,7 @@
                         <div class="card mb-3" data-activity-day="{{ ns.day_of_year }}" data-activity-date="{{ activity.when }}" data-debug-month="{{ activity_month }}" data-debug-day="{{ activity_day }}">
                             <div class="card-body">
                                 <div class="d-flex align-items-start">
-                                    <span class="avatar avatar-md me-3" style="border-left: 5px solid var(--tblr-{{ activity_types.color(activity.activity_type_key) }});">
+                                    <span class="avatar avatar-md me-3 flex-shrink-0" style="border-left: 5px solid var(--tblr-{{ activity_types.color(activity.activity_type_key) }});">
                                         {{ activity_types.emoji(activity.activity_type_key) }}
                                     </span>
                                     <div class="flex-fill">
