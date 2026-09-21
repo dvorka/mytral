@@ -86,7 +86,9 @@ Install:
 * [Windows (installer)](INSTALLATION.md#install-on-windows-using-installer)
 * [Windows (zip)](INSTALLATION.md#install-on-windows-using-zip)
 * [Windows (winget)](INSTALLATION.md#install-on-windows-using-winget)
+<!--
 * [macOS (dmg)](INSTALLATION.md#install-on-macos-using-dmg)
+-->
 
 Build:
 
