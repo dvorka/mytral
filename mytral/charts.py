@@ -3152,19 +3152,26 @@ def _attribute_per_week(
 
         activities.reverse()
 
+        # ISO (year, week) of each activity - e.g. 2013/12/30 is 2014w1
+        iso_weeks = [
+            datetime.date(a.when_year, a.when_month, a.when_day).isocalendar()[:2]
+            for a in activities
+        ]
+
         # initialize data
-        min_year = activities[0].when_year
-        max_year = activities[-1].when_year
+        min_year = min(iso_year for iso_year, _ in iso_weeks)
+        max_year = max(iso_year for iso_year, _ in iso_weeks)
         meta = {year: None for year in range(min_year, max_year + 1)}
         for year in meta:
-            data[year] = {week: 0.0 for week in range(1, 54)}
+            # ISO year has 52 or 53 weeks - Dec 28 is always in the last week
+            weeks_in_year = datetime.date(year, 12, 28).isocalendar()[1]
+            data[year] = {week: 0.0 for week in range(1, weeks_in_year + 1)}
 
         # index data by year and week
-        for a in activities:
-            year = a.when_year
-            week = datetime.date(year, a.when_month, a.when_day).isocalendar()[1]
+        for a, (year, week) in zip(activities, iso_weeks):
             value = getattr(a, attribute_name)
-            if value:
+            # skip missing values incl. NaN (NaN is truthy and poisons min/avg)
+            if value and not math.isnan(value):
                 current = data[year][week]
                 # min value for both weight and resting HR
                 if current == 0.0 or value < current:
@@ -3244,7 +3251,8 @@ def _attribute_per_week(
     # map: value(int) -> label(str)
     x_labels = {}
     for e, x_value in enumerate(x):
-        x_labels[e] = f"{int(x_value)}w{int((x_value - int(x_value)) * 100.0) + 1}"
+        # x_value is year + week/100 - round() to avoid float errors like 49.99
+        x_labels[e] = f"{int(x_value)}w{round((x_value - int(x_value)) * 100.0)}"
     all_x_labels = x_labels.copy()
     # show only 15 labels so they do NOT overlap
     sparsity = 5.0 if is_mobile_view else 15.0
