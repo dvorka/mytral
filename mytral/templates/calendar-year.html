@@ -234,7 +234,7 @@
                                         {{ data.week_stats.get(year,{}).get(week_number,{}).get("time",0) }}
                                         {% if data.week_stats.get(year,{}).get(week_number,{}).get("kgs",0) > 0 %}
                                             <br/>
-                                            {{ data.week_stats.get(year,{}).get(week_number,{}).get("kgs",0)|int }}kg
+                                            {{ "{:0,}".format(data.week_stats.get(year,{}).get(week_number,{}).get("kgs",0)|int) }}kg
                                         {% endif %}
                                     </div>
                                 {% else %}

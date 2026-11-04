@@ -16,13 +16,9 @@
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 import abc
 import logging
-import os
 import sys
 
 import structlog
-
-# flags
-ON_PYTHONANYWHERE = bool(os.getenv("PYTHONANYWHERE_DOMAIN"))
 
 #
 # MyTraL logging infrastructure
@@ -45,7 +41,7 @@ def configure_structlog(debug: bool) -> None:
     debug : bool
         When ``True`` use the pretty dev renderer, otherwise emit JSON.
     """
-    log_output = sys.stderr if ON_PYTHONANYWHERE else sys.stdout
+    log_output = sys.stdout
     log_level = logging.DEBUG if debug else logging.INFO
 
     # processors applied to every log event regardless of renderer
@@ -181,16 +177,10 @@ class MytralPrintLogger(MytralLogger):
         pass
 
     def info(self, msg, *args, **kwargs):
-        if ON_PYTHONANYWHERE:
-            print(msg, file=sys.stderr)
-        else:
-            print(msg)
+        print(msg)
 
     def debug(self, msg, *args, **kwargs):
-        if ON_PYTHONANYWHERE:
-            print(msg, file=sys.stderr)
-        else:
-            print(msg)
+        print(msg)
 
     def warning(self, msg, *args, **kwargs):
         print(msg, file=sys.stderr)
