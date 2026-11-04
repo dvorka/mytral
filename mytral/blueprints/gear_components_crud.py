@@ -252,7 +252,11 @@ def settings_gear_component_create(gear_key: str):
             flask.flash(
                 message=f"Component '{component.name}' created", category="success"
             )
-            return flask.redirect(flask.url_for("settings_gear_update", key=gear_key))
+            return flask.redirect(
+                flask.url_for(
+                    "settings_gear_update", key=gear_key, active_component=component.key
+                )
+            )
 
         flask.flash(
             message="Component create error - form validation error", category="error"
@@ -387,7 +391,13 @@ def settings_gear_component_update(gear_key: str, component_key: str):
             flask.flash(
                 message=f"Component '{form.name.data}' updated", category="success"
             )
-            return flask.redirect(flask.url_for("settings_gear_update", key=gear_key))
+            return flask.redirect(
+                flask.url_for(
+                    "settings_gear_update",
+                    key=gear_key,
+                    active_component=component_key,
+                )
+            )
 
         flask.flash(
             message="Component update error - form validation error", category="error"
@@ -399,7 +409,11 @@ def settings_gear_component_update(gear_key: str, component_key: str):
             category="error",
         )
 
-    return flask.redirect(flask.url_for("settings_gear_update", key=gear_key))
+    return flask.redirect(
+        flask.url_for(
+            "settings_gear_update", key=gear_key, active_component=component_key
+        )
+    )
 
 
 @flask_app.route(
@@ -544,7 +558,13 @@ def settings_gear_component_service(gear_key: str, component_key: str):
             flask.flash(
                 message=f"Service recorded for '{component.name}'", category="success"
             )
-            return flask.redirect(flask.url_for("settings_gear_update", key=gear_key))
+            return flask.redirect(
+                flask.url_for(
+                    "settings_gear_update",
+                    key=gear_key,
+                    active_component=component_key,
+                )
+            )
 
         flask.flash(
             message="Service record error - form validation error", category="error"
@@ -556,7 +576,11 @@ def settings_gear_component_service(gear_key: str, component_key: str):
             category="error",
         )
 
-    return flask.redirect(flask.url_for("settings_gear_update", key=gear_key))
+    return flask.redirect(
+        flask.url_for(
+            "settings_gear_update", key=gear_key, active_component=component_key
+        )
+    )
 
 
 @flask_app.route(
@@ -608,7 +632,9 @@ def settings_gear_component_retire(gear_key: str, component_key: str):
     except Exception as e:
         flask.flash(message=f"Component error: {e}", category="error")
 
-    return flask.redirect(flask.url_for("settings_gear_get", key=gear_key))
+    return flask.redirect(
+        flask.url_for("settings_gear_get", key=gear_key, active_component=component_key)
+    )
 
 
 @flask_app.route(
@@ -649,7 +675,9 @@ def settings_gear_component_unretire(gear_key: str, component_key: str):
     except Exception as e:
         flask.flash(message=f"Component error: {e}", category="error")
 
-    return flask.redirect(flask.url_for("settings_gear_get", key=gear_key))
+    return flask.redirect(
+        flask.url_for("settings_gear_get", key=gear_key, active_component=component_key)
+    )
 
 
 def api_component_templates():
@@ -751,9 +779,19 @@ def settings_gear_component_service_update(gear_key, component_key, service_inde
             )
 
             flask.flash("Service entry updated successfully", "success")
-            return flask.redirect(flask.url_for("settings_gear_update", key=gear_key))
+            return flask.redirect(
+                flask.url_for(
+                    "settings_gear_update",
+                    key=gear_key,
+                    active_component=component_key,
+                )
+            )
 
-    return flask.redirect(flask.url_for("settings_gear_update", key=gear_key))
+    return flask.redirect(
+        flask.url_for(
+            "settings_gear_update", key=gear_key, active_component=component_key
+        )
+    )
 
 
 @flask_app.route(
@@ -802,4 +840,8 @@ def settings_gear_component_service_delete(gear_key, component_key, service_inde
     except Exception as e:
         flask.flash(f"Error deleting service entry: {e}", "error")
 
-    return flask.redirect(flask.url_for("settings_gear_update", key=gear_key))
+    return flask.redirect(
+        flask.url_for(
+            "settings_gear_update", key=gear_key, active_component=component_key
+        )
+    )

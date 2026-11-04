@@ -1,8 +1,10 @@
 {# Macros for the Components sidebar+detail UI used in gear-get and gear-update pages. #}
 
 
-{# Left sidebar navigation listing active and retired components. #}
-{% macro comp_sidebar(active_components, retired_components, gear_key) %}
+{# Left sidebar navigation listing active and retired components.
+   default_active_key: key of the component whose nav item (and detail
+   section, via comp_default_active_key) should start selected. #}
+{% macro comp_sidebar(active_components, retired_components, gear_key, default_active_key='') %}
 <div class="card-body">
     <div class="d-flex align-items-center justify-content-between mb-2">
         <h4 class="subheader mb-0">Components</h4>
@@ -18,7 +20,7 @@
     {% if active_components %}
     <div class="list-group list-group-transparent mb-0" id="components-nav">
         {% for comp in active_components %}
-        <a href="#" class="list-group-item list-group-item-action d-flex align-items-center justify-content-between{% if loop.first %} active{% endif %}" data-section="comp-{{ comp.key }}">
+        <a href="#" class="list-group-item list-group-item-action d-flex align-items-center justify-content-between{% if comp.key == default_active_key %} active{% endif %}" data-section="comp-{{ comp.key }}">
             <span class="text-truncate me-2">{{ comp.name }}</span>
             {% if comp.requires_service %}
             <span class="badge bg-danger text-red-fg flex-shrink-0">Service</span>
@@ -34,7 +36,7 @@
         <h4 class="subheader">Retired</h4>
         <div class="list-group list-group-transparent" id="retired-components-nav">
             {% for comp in retired_components %}
-            <a href="#" class="list-group-item list-group-item-action d-flex align-items-center justify-content-between text-muted{% if not active_components and loop.first %} active{% endif %}" data-section="comp-{{ comp.key }}">
+            <a href="#" class="list-group-item list-group-item-action d-flex align-items-center justify-content-between text-muted{% if comp.key == default_active_key %} active{% endif %}" data-section="comp-{{ comp.key }}">
                 <span class="text-truncate me-2">{{ comp.name }}</span>
                 <span class="badge bg-secondary text-secondary-fg flex-shrink-0">Retired</span>
             </a>
@@ -46,6 +48,22 @@
     <p class="text-muted small mt-2">No components yet.</p>
     {% endif %}
 </div>
+{% endmacro %}
+
+
+{# Resolve the key of the component that should be shown/selected by default.
+   Prefers requested_key (e.g. from a query string) when it names a real
+   component, falling back to the first active component, then the first
+   retired one, then '' if there are no components at all. #}
+{% macro comp_default_active_key(active_components, retired_components, requested_key='') %}
+{%- set requested_matches = (active_components + retired_components) | selectattr('key', 'equalto', requested_key) | list -%}
+{%- if requested_key and requested_matches -%}
+{{- requested_key -}}
+{%- elif active_components -%}
+{{- active_components[0].key -}}
+{%- elif retired_components -%}
+{{- retired_components[0].key -}}
+{%- endif -%}
 {% endmacro %}
 
 

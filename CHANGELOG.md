@@ -1,6 +1,40 @@
 # Changelog
 
-## [1.60.0](https://github.com/dvorka/mytral/compare/v1.59.0...HEAD)
+## [1.61.0](https://github.com/dvorka/mytral/compare/v1.60.0...HEAD)
+
+This MyTraL **minor** release brings:
+
+### Added
+- .
+
+### Changed
+- The activity feed now shows an equal three-way split (photo, map, elevation chart)
+  for endurance activities that have both a highlight photo and a GPS route, instead
+  of a two-way photo/map split.
+- Replaced the animated gradient route polyline in the activity feed's map-only
+  preview with a static grade histogram (distance share of steep descent, descent,
+  flat, climb and steep climb), labelled under each bar.
+
+### Fixed
+- Fixed the gear chart view (`Settings > Gear > Chart`) showing the gear table
+  underneath the chart instead of the chart alone.
+- Fixed the gear component sidebar (`Settings > Gear > Edit`/`Detail`) always
+  jumping back to the first component after adding, editing, servicing,
+  retiring or un-retiring a component - it now stays on the component just
+  changed.
+- Fixed the activity type emoji avatar in the year feed sometimes rendering
+  narrower than others - the avatar is now a fixed-width flex item regardless
+  of the emoji glyph.
+- Fixed the activity type emoji avatar on the activity detail, activity
+  analysis and gear detail pages using the activity type color as a solid
+  background instead of a left border, unlike the year feed.
+
+### Documentation
+- .
+
+
+
+## [1.60.0](https://github.com/dvorka/mytral/compare/v1.59.0...v1.60.0)
 
 This MyTraL **minor** release brings:
 

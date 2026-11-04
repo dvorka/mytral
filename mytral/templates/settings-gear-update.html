@@ -1,4 +1,4 @@
-{% from 'macros/gear_components.html' import comp_sidebar, comp_stats_cards, comp_service_progress, comp_service_history_table, comp_retired_pane, comp_empty_state, comp_js %}
+{% from 'macros/gear_components.html' import comp_sidebar, comp_default_active_key, comp_stats_cards, comp_service_progress, comp_service_history_table, comp_retired_pane, comp_empty_state, comp_js %}
 {% import "macros/activity-fields.html" as field_macros %}
 
 
@@ -89,20 +89,21 @@
     {% set active_components = gear.get_components() %}
     {% set all_components_inc_retired = gear.get_components(include_retired=True) %}
     {% set retired_components = all_components_inc_retired | rejectattr('status', 'equalto', 'active') | list %}
+    {% set default_active_key = comp_default_active_key(active_components, retired_components, request.args.get('active_component', '')) %}
     <div class="row row-deck row-cards mt-0">
         <div class="col-12">
             <div class="card">
                 <div class="row g-0">
 
                     <div class="col-12 col-md-3 border-end">
-                        {{ comp_sidebar(active_components, retired_components, key) }}
+                        {{ comp_sidebar(active_components, retired_components, key, default_active_key) }}
                     </div>
 
                     <div class="col-12 col-md-9 d-flex flex-column">
                         {% if active_components or retired_components %}
 
                             {% for comp in active_components %}
-                            <div id="comp-{{ comp.key }}" class="comp-section{% if not loop.first %} d-none{% endif %}">
+                            <div id="comp-{{ comp.key }}" class="comp-section{% if comp.key != default_active_key %} d-none{% endif %}">
                                 <div class="card-body border-bottom">
                                     <div class="d-flex align-items-start justify-content-between flex-wrap gap-2">
                                         <div>
@@ -167,7 +168,7 @@
                             {% endfor %}
 
                             {% for comp in retired_components %}
-                            {{ comp_retired_pane(comp, gear, key, visible=(not active_components and loop.first), csrf_token=form.csrf_token._value()) }}
+                            {{ comp_retired_pane(comp, gear, key, visible=(comp.key == default_active_key), csrf_token=form.csrf_token._value()) }}
                             {% endfor %}
 
                         {% else %}
