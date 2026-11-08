@@ -780,7 +780,8 @@ class CreateActivityForm(flask_wtf.FlaskForm):
         render_kw={"placeholder": "0"},
         label="Hours",
         description="Duration in hours (0-23)",
-        validators=[validators.NumberRange(0, 23)],
+        # validators=[validators.NumberRange(0, 23)],
+        validators=[],
         default=0,
     )
     minutes = wtforms.IntegerField(

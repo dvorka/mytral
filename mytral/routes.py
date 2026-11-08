@@ -695,10 +695,13 @@ def home():
         is_mobile_view=is_mobile,
     )
 
+    # aggregated placeholder activities would distort all-time records
+    record_activities = [a for a in all_activities if not a.skip_from_stats]
+
     # find fastest activity (best pace)
     dashboard_fastest_activity = None
     dashboard_fastest_pace = float("inf")
-    for a in all_activities:
+    for a in record_activities:
         if a.distance > 0 and a.duration_seconds > 0:
             pace = a.duration_seconds / (a.distance / 1000)  # seconds per km
             if pace < dashboard_fastest_pace:
@@ -706,16 +709,14 @@ def home():
                 dashboard_fastest_activity = a
 
     # find longest activity by distance
-    dashboard_longest_activity = (
-        max(all_activities, key=lambda x: x.distance, default=None)
-        if all_activities
-        else None
+    dashboard_longest_activity = max(
+        record_activities, key=lambda x: x.distance, default=None
     )
 
     # find most intense activity (by heart rate or watts)
     dashboard_most_intense_activity = None
     dashboard_highest_intensity = 0
-    for a in all_activities:
+    for a in record_activities:
         # normalize watts
         intensity_score = max(a.avg_hr or 0.0, (a.avg_watts or 0.0) / 10.0)
         if intensity_score > dashboard_highest_intensity:
@@ -723,10 +724,8 @@ def home():
             dashboard_most_intense_activity = a
 
     # find activity with most elevation gain
-    dashboard_highest_elevation_activity = (
-        max(all_activities, key=lambda x: x.elevation_gain, default=None)
-        if all_activities
-        else None
+    dashboard_highest_elevation_activity = max(
+        record_activities, key=lambda x: x.elevation_gain, default=None
     )
 
     # everesting: climbed / 8848 m for the top climbing sport, per period
@@ -779,6 +778,7 @@ def home():
         radar_script=radar_script,
         is_mobile=is_mobile,
         activity_types=activity_types,
+        ukm_coefficients=views.ukm_coefficient_labels(activity_types),
         # predictions & insights for dashboard cards
         on_the_same_day=on_the_same_day,
         # warnings
@@ -1192,12 +1192,14 @@ def insight_lifetime_totals():
     )
 
     aspect = flask.request.args.get(commons.URL_ARG_ASPECT, "sports")
+    activity_types = ds.list_activity_types(user_id=user_id)
 
     template_vars: dict = {
         "user_profile": user_profile,
         "stats": ds_stats,
-        "activity_types": ds.list_activity_types(user_id=user_id),
+        "activity_types": activity_types,
         "aspect": aspect,
+        "ukm_coefficients": views.ukm_coefficient_labels(activity_types),
     }
 
     if aspect == "meta":
@@ -4087,10 +4089,13 @@ def list_activities_year(year):
     )
     year_total_cost = sum(a.cost for a in activities if a.cost)
 
+    # aggregated placeholder activities would distort year records
+    record_activities = [a for a in activities if not a.skip_from_stats]
+
     # find fastest activity (best pace)
     year_fastest_activity = None
     year_fastest_pace = float("inf")
-    for a in activities:
+    for a in record_activities:
         if a.distance > 0 and a.duration_seconds > 0:
             pace = a.duration_seconds / (a.distance / 1000)  # seconds per km
             if pace < year_fastest_pace:
@@ -4098,24 +4103,22 @@ def list_activities_year(year):
                 year_fastest_activity = a
 
     # find longest activity by distance
-    year_longest_activity = (
-        max(activities, key=lambda x: x.distance, default=None) if activities else None
+    year_longest_activity = max(
+        record_activities, key=lambda x: x.distance, default=None
     )
 
     # find most intense activity (by heart rate or watts)
     year_most_intense_activity = None
     year_highest_intensity = 0
-    for a in activities:
+    for a in record_activities:
         intensity_score = max(a.avg_hr or 0, (a.avg_watts or 0) / 10)  # normalize watts
         if intensity_score > year_highest_intensity:
             year_highest_intensity = intensity_score
             year_most_intense_activity = a
 
     # find activity with most elevation gain
-    year_highest_elevation_activity = (
-        max(activities, key=lambda x: x.elevation_gain, default=None)
-        if activities
-        else None
+    year_highest_elevation_activity = max(
+        record_activities, key=lambda x: x.elevation_gain, default=None
     )
 
     activity_maps: dict[str, dict] = {}
@@ -4893,6 +4896,8 @@ def list_activities_validation():
     # validate each activity and collect those with problems
     junkyard: list[tuple[entities_mod.ActivityEntity, list[tuple[str, str]]]] = []
     for a in activities:
+        if a.skip_from_stats:
+            continue
         problems = entities_mod.validate_activity(a)
         if problems:
             junkyard.append((a, problems))

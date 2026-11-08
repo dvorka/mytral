@@ -734,6 +734,19 @@ class CalendarHeatmap:
         return json.dumps(self.to_dict(), indent=2)
 
 
+def ukm_coefficient_labels(
+    activity_types: settings.UserActivityTypes,
+) -> list[tuple[str, float]]:
+    """Get (sport display name, UKM coefficient) pairs to be shown in the UI."""
+    return [
+        (
+            commons.M_AT_DISPLAY_NAMES.get(key) or activity_types.name(key) or key,
+            coefficient,
+        )
+        for key, coefficient in commons.UKM_COEFFICIENTS.items()
+    ]
+
+
 _SKIP_ACTIVITY_TYPES = frozenset({"sick", "injured", "comment"})
 
 

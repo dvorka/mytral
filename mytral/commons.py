@@ -86,6 +86,11 @@ WEATHERS = [
     ("windy", "windy"),
 ]
 
+# aggregated activity representing multiple activities which were not digitized
+# yet - it makes a year complete, but it must be skipped from records & validation
+SKIP_FROM_STATS_TAG = "skip-from-stats"
+SKIP_FROM_STATS_NAME_MARKER = "[SKIP]"
+
 INTENSITY_NONE = ""
 INTENSITY_EASY = "easy"
 INTENSITY_HARD = "hard"
@@ -388,6 +393,11 @@ AT_TAXONOMY = {
     ],
 }
 
+# reverse taxonomy: activity type key > meta activity type key
+META_AT_BY_AT: dict[str, str] = {
+    at_key: meta_key for meta_key, at_keys in AT_TAXONOMY.items() for at_key in at_keys
+}
+
 
 def aggregate_ints_by_meta_sport(
     per_activity_type: dict[str, int],
@@ -467,33 +477,46 @@ def everesting_variant(elevation_gain: int) -> str | None:
 # UNIVERSAL KM COEFFICIENTS
 #
 # - activity km to universal km conversion
-#  - activity_types which don't have a coefficient are NOT counted to universal km
+# - coefficients are keyed by activity type or meta activity type - an activity
+#   type without its own coefficient inherits the coefficient of its meta activity
+#   type (mountain bike > ride, erg row > row, ...)
+# - activity types which don't have a coefficient are NOT counted to universal km
 #
 
 # coefficients used in my legacy paper and digital training logs
 _LEGACY_UKM_COEFFICIENTS = {
-    AT_RUN: 1.0,
-    AT_RIDE: 0.5,
-    AT_ROW: 1.0,
-    AT_SKI_DP: 0.5,
-    AT_SKI_F: 0.5,
-    AT_RS_DP: 0.5,
-    AT_RS_F: 0.5,
-    AT_SWIM: 5.0,
+    M_AT_RUN: 1.0,
+    M_AT_RIDE: 0.33,
+    AT_RIDE_MOUNTAIN: 0.4,
+    M_AT_ROW: 1.0,
+    M_AT_SKI: 0.5,
+    M_AT_SWIM: 5.0,
+    M_AT_HIKE: 0.8,
 }
 
 _MYTRAL_UKM_COEFFICIENTS = {
-    AT_RUN: 1.0,
-    AT_RIDE: 0.4,
-    AT_ROW: 1.0,
+    M_AT_RUN: 1.0,
+    M_AT_RIDE: 0.4,
+    M_AT_ROW: 1.0,
+    M_AT_SKI: 0.5,
     AT_SKI_DP: 0.6,
-    AT_SKI_F: 0.5,
     AT_RS_DP: 0.6,
-    AT_RS_F: 0.5,
-    AT_SWIM: 5.0,
+    M_AT_SWIM: 5.0,
+    M_AT_HIKE: 0.8,
 }
 
 UKM_COEFFICIENTS = _LEGACY_UKM_COEFFICIENTS
+UKM_COEFFICIENT_NOT_COUNTED = 0.0
+
+
+def ukm_coefficient(activity_type_key: str) -> float:
+    """Get activity km > universal km coefficient of the given activity type."""
+    if activity_type_key in UKM_COEFFICIENTS:
+        return UKM_COEFFICIENTS[activity_type_key]
+    return UKM_COEFFICIENTS.get(
+        META_AT_BY_AT.get(activity_type_key, ""), UKM_COEFFICIENT_NOT_COUNTED
+    )
+
 
 #
 # theoretical constants used in calculations

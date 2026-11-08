@@ -215,12 +215,6 @@ class ActivityType:
         )
 
 
-_BOOTSTRAP_META_ACTIVITY_TYPES_BY_ACTIVITY_KEY: dict[str, str] = {
-    activity_type_key: meta_activity_type
-    for meta_activity_type, activity_types in commons.AT_TAXONOMY.items()
-    for activity_type_key in activity_types
-}
-
 _BOOTSTRAP_MUSCLE_GROUPS_BY_META_ACTIVITY_TYPE: dict[
     str, tuple[list[str], list[str]]
 ] = {
@@ -365,8 +359,8 @@ def _bootstrap_activity_types_with_defaults(
     activity_types: list[ActivityType],
 ) -> list[ActivityType]:
     for activity_type in activity_types:
-        activity_type.meta_activity_type = (
-            _BOOTSTRAP_META_ACTIVITY_TYPES_BY_ACTIVITY_KEY.get(activity_type.key, "")
+        activity_type.meta_activity_type = commons.META_AT_BY_AT.get(
+            activity_type.key, ""
         )
         primary_muscles, secondary_muscles = (
             _BOOTSTRAP_MUSCLE_GROUPS_BY_ACTIVITY_TYPE_KEY.get(

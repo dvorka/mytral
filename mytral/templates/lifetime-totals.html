@@ -1,3 +1,4 @@
+{% import "macros/ukm.html" as ukm_macros %}
 {% macro format_duration(duration) %}
     {% set parts = duration.replace('h', 'h ').replace('m', '\' ').split() %}
     {% for part in parts[:-1] %}{{ part[:-1] }}<b>{{ part[-1] }}</b>&nbsp;{% endfor %}
@@ -71,6 +72,7 @@
                 UKM normalizes different activities (running, cycling, swimming, etc.) for fair comparison using sport-specific conversion factors.
             </p>
             {% endif %}
+            {{ ukm_macros.ukm_coefficients_badges(ukm_coefficients) }}
         </div>
     </div>
 
@@ -123,6 +125,7 @@
                             </td>
                             <td class="text-end table-dark">
                                 <strong>{{ "{:0,}".format(stats.ukm|int) }}&nbsp;ukm</strong><br/>
+                                <span class="text-muted">{{ "{:0,}".format(stats.total_km_per_activity_type.values()|sum) }}&nbsp;km</span><br/>
                                 <small class="text-muted">{{ format_duration(stats.utime) }}</small>
                                 {{ elevation_line(stats.total_elevation_per_activity_type.values()|sum) }}
                             </td>

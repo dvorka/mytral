@@ -348,6 +348,13 @@ class ActivityEntity(DbEntity):
         """Did this single activity climb a full Everest (8848 m) or more?"""
         return self.elevation_gain >= commons.EVERESTING_M
 
+    @property
+    def skip_from_stats(self) -> bool:
+        """Is this an aggregated placeholder activity to be skipped from stats?"""
+        return commons.SKIP_FROM_STATS_TAG in (
+            self.tags or []
+        ) or commons.SKIP_FROM_STATS_NAME_MARKER in (self.name or "")
+
     def to_dict(self) -> dict:
         return dataclasses.asdict(self)
 

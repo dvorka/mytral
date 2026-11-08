@@ -506,7 +506,7 @@ class PerYearUserDatasetStats:
                         )
                     )
 
-                    ukm_coefficient = commons.UKM_COEFFICIENTS.get(mytral_sport, 1.0)
+                    ukm_coefficient = commons.ukm_coefficient(mytral_sport)
                     self.ukm += float(meters) / 1000.0 * ukm_coefficient
                     self.us += activity.duration_seconds
                     self.utime = cals.seconds_to_str_time(self.us)

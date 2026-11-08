@@ -1,0 +1,18 @@
+{# UKM coefficients as plain text e.g. for tooltips #}
+{% macro ukm_coefficients_text(ukm_coefficients) -%}
+    {% for label, coefficient in ukm_coefficients %}{{ label }} {{ coefficient }}{% if not loop.last %}, {% endif %}{% endfor %}
+{%- endmacro %}
+
+{# UKM coefficients as badges with explanation #}
+{% macro ukm_coefficients_badges(ukm_coefficients) %}
+    <p class="text-muted mb-2">
+        <strong>UKM coefficients</strong> - 1 km of a sport counts as <em>coefficient</em> ukm.
+        Activity types without their own coefficient inherit the coefficient of their meta sport
+        (e.g., gravel bike > Ride), other sports are not counted to UKM.
+    </p>
+    <div>
+        {% for label, coefficient in ukm_coefficients %}
+            <span class="badge bg-secondary text-secondary-fg me-1 mb-1">{{ label }} {{ coefficient }}</span>
+        {% endfor %}
+    </div>
+{% endmacro %}

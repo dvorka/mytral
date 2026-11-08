@@ -1,3 +1,4 @@
+{% import "macros/ukm.html" as ukm_macros %}
 {% macro format_duration(duration) %}
     {# % set parts = duration.replace('h', 'h ').replace('m', 'm ').replace('s', 's ').split() % #}
     {% set parts = duration.replace('h', 'h ').replace('m', '\' ').split() %}
@@ -104,7 +105,7 @@
                     <div class="d-flex align-items-center">
                         <div class="subheader">
                             Total UKM
-                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-info-circle ms-1" width="16" height="16" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round" data-bs-toggle="tooltip" data-bs-placement="top" title="Universal Kilometers (UKM) normalize different activities to a common metric. For example, 1 km running ≈ 4 km cycling. This allows fair comparison across sports. The progress bar shows this year's contribution to your lifetime UKM total.">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-info-circle ms-1" width="16" height="16" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round" data-bs-toggle="tooltip" data-bs-placement="top" title="Universal Kilometers (UKM) normalize different activities to a common metric. This allows fair comparison across sports. Coefficients: {{ ukm_macros.ukm_coefficients_text(ukm_coefficients) }}. The progress bar shows this year's contribution to your lifetime UKM total.">
                                 <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
                                 <path d="M3 12a9 9 0 1 0 18 0a9 9 0 0 0 -18 0"></path>
                                 <path d="M12 9h.01"></path>
@@ -239,15 +240,15 @@
         </div>
         {% endif %}
 
-        {# Average Weight card #}
+        {# Current Weight card #}
         {% if on_the_same_day and on_the_same_day.weight_preds and on_the_same_day.weight_preds|length >= 2 %}
         <div class="col-sm-6 col-lg-3">
             <div class="card">
                 <div class="card-body">
                     <div class="d-flex align-items-center">
                         <div class="subheader">
-                            Average Weight
-                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-info-circle ms-1" width="16" height="16" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round" data-bs-toggle="tooltip" data-bs-placement="top" title="Your average body weight based on historical measurements from the same weekday in previous years. Red if your current weight is above the historical average, green if below.">
+                            Current Weight
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-info-circle ms-1" width="16" height="16" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round" data-bs-toggle="tooltip" data-bs-placement="top" title="Your current body weight compared to your average weight based on historical measurements from the same weekday in previous years. Red if your current weight is above the historical average, green if below.">
                                 <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
                                 <path d="M3 12a9 9 0 1 0 18 0a9 9 0 0 0 -18 0"></path>
                                 <path d="M12 9h.01"></path>
@@ -257,12 +258,8 @@
                     </div>
                     {% set avg_weight = on_the_same_day.weight_preds[0][2] %}
                     {% set current_weight = on_the_same_day.weight_preds[0][3] %}
-                    {% if current_weight > avg_weight %}
-                    <div class="h1 mb-1 text-danger">{{ on_the_same_day.weight_preds[0][1] }} kg</div>
-                    {% else %}
-                    <div class="h1 mb-1 text-success">{{ on_the_same_day.weight_preds[0][1] }} kg</div>
-                    {% endif %}
-                    <div class="text-muted small">Current: {{ current_weight }} kg</div>
+                    <div class="h1 mb-1 {{ 'text-danger' if current_weight > avg_weight else 'text-success' }}">{{ current_weight|round(1) }} kg</div>
+                    <div class="text-muted small">Average: {{ on_the_same_day.weight_preds[0][1] }} kg</div>
                     <a href="{{ url_for('insight_weight') }}" class="stretched-link"></a>
                 </div>
             </div>
