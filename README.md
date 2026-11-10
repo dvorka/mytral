@@ -9,6 +9,7 @@
 [![GitHub Actions CI for tarball](https://github.com/dvorka/mytral/actions/workflows/distro-tarball.yml/badge.svg)](https://github.com/dvorka/mytral/actions)
 [![Get it from the Snap Store](https://snapcraft.io/mytral/badge.svg)](https://snapcraft.io/mytral)
 [![Current release](https://img.shields.io/github/release/dvorka/mytral.svg)](https://github.com/dvorka/mytral/releases)
+[![All releases downloads](https://img.shields.io/github/downloads/dvorka/mytral/total.svg)](https://github.com/dvorka/mytral/releases)
 [![GitHub issues](https://img.shields.io/github/issues/dvorka/mytral.svg?maxAge=360)](https://github.com/dvorka/mytral/issues)
 [![License](https://img.shields.io/github/license/dvorka/mytral?color=%24fe0000)](https://github.com/dvorka/mytral/blob/main/LICENSE)
 
